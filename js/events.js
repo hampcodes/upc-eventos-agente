@@ -115,6 +115,8 @@ const eliminarDesdeFormulario = () => {
 
 
 // ===== Eventos =====
+obtenerEventos(); // al cargar la página, los eventos iniciales ya quedan en localStorage
+
 if (eventos) {
   buscador.addEventListener("input", mostrarEventos);
   mostrarEventos();

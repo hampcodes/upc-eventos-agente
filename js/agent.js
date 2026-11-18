@@ -10,6 +10,7 @@ const botonMicrofono = document.querySelector("#boton-microfono");
 const urlApi = "/.netlify/functions/chat";
 const modelo = "gpt-4o-mini";
 const idioma = "es-MX"; // idioma de la voz y del micrófono: "es-MX", "es-ES", "es-PE"...
+leerDatos("upc_compras", []); // crea la lista de compras (vacía) al cargar la página
 
 const instrucciones = `Eres el asistente de UPC Eventos. Responde en español, breve y amable, en texto plano sin Markdown ni asteriscos.
 Usa obtener_eventos para consultar los eventos y sus precios; no inventes eventos.

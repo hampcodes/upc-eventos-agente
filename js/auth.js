@@ -81,6 +81,8 @@ const cerrarSesion = () => {
 
 
 // ===== Eventos =====
+obtenerUsuarios(); // al cargar la página, los usuarios iniciales ya quedan en localStorage
+
 if (formLogin) {
   formLogin.addEventListener("submit", iniciarSesion);
 }
