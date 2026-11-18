@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar evento | UPC</title>
+    <link rel="icon" type="image/png" href="../../img/favicon-upc.png">
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="container">
+            <a href="../../index.html" class="logo"><img src="../../img/favicon-upc.png" alt="UPC - Ir al inicio"></a>
+            <input type="checkbox" id="menu-abierto" class="menu-toggle" aria-hidden="true">
+            <label for="menu-abierto" class="menu-btn" aria-label="Abrir menú"><span></span><span></span><span></span></label>
+            <nav class="nav-links">
+                <a href="events.html">Mis eventos</a>
+                <a href="new-event.html">Nuevo evento</a>
+                <span class="usuario" id="nombre-usuario"></span>
+                <button type="button" class="btn btn-primary" id="boton-salir">Salir</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container page page-narrow">
+        <a href="events.html" class="back">← Volver</a>
+        <h1>Editar evento</h1>
+        <p>Actualiza la información de tu evento.</p>
+
+        <form class="form-layout" id="formulario-evento">
+
+            <!-- Qué es -->
+            <div class="field">
+                <label for="titulo">Título</label>
+                <input type="text" id="titulo" name="titulo" placeholder="Ej. Meetup de Tecnología" required>
+            </div>
+            <div class="field">
+                <label for="descripcion">Descripción</label>
+                <textarea id="descripcion" name="descripcion" placeholder="Cuéntale a la gente de qué trata" required></textarea>
+            </div>
+
+            <!-- Cuándo -->
+            <div class="row">
+                <div class="field">
+                    <label for="fecha">Fecha</label>
+                    <input type="date" id="fecha" name="fecha" required>
+                </div>
+                <div class="field">
+                    <label for="hora">Hora</label>
+                    <input type="time" id="hora" name="hora" required>
+                </div>
+            </div>
+
+            <!-- Dónde -->
+            <div class="row">
+                <div class="field">
+                    <label for="campus">Campus</label>
+                    <select id="campus" name="campus" required>
+                        <option value="">Selecciona un campus</option>
+                        <option>Monterrico</option>
+                        <option>San Isidro</option>
+                        <option>San Miguel</option>
+                        <option>Villa</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="ambiente">Ambiente</label>
+                    <input type="text" id="ambiente" name="ambiente" placeholder="Ej. Auditorio, Aula B-301" required>
+                </div>
+            </div>
+
+            <!-- Cuánta gente -->
+            <div class="field">
+                <label for="capacidad">Capacidad</label>
+                <input type="number" id="capacidad" name="capacidad" min="1" placeholder="50" required>
+            </div>
+
+            <!-- Imagen por defecto -->
+            <input type="hidden" id="imagen" name="imagen" value="/img/eventos/campus-aereo.jpg">
+
+            <!-- Botones -->
+            <div class="form-actions">
+                <button type="button" id="boton-eliminar" class="btn btn-danger">Eliminar</button>
+                <div class="group">
+                    <a href="events.html" class="btn">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <script src="../../js/localstorage.js"></script>
+    <script src="../../js/events.js"></script>
+    <script src="../../js/auth.js"></script>
+</body>
+</html>

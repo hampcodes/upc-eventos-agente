@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hackathon UPC | UPC</title>
+    <link rel="icon" type="image/png" href="../../img/favicon-upc.png">
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="container">
+            <a href="../../index.html" class="logo"><img src="../../img/favicon-upc.png" alt="UPC - Ir al inicio"></a>
+            <input type="checkbox" id="menu-abierto" class="menu-toggle" aria-hidden="true">
+            <label for="menu-abierto" class="menu-btn" aria-label="Abrir menú"><span></span><span></span><span></span></label>
+            <nav class="nav-links">
+                <a href="explorar.html">Explorar</a>
+                <span class="usuario" id="nombre-usuario"></span>
+                <button type="button" class="btn btn-primary" id="boton-salir">Salir</button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="evento-portada" style="background-image: url('../../img/eventos/computo.jpg')">
+            <div class="container">
+                <a href="explorar.html" class="back-claro">← Volver a eventos</a>
+                <p class="hero-etiqueta">25 nov 2026 · Monterrico</p>
+                <h1>Hackathon UPC</h1>
+            </div>
+        </section>
+
+        <section class="container detail">
+            <div>
+                <h2>Acerca del evento</h2>
+                <p class="detail-texto">24 horas para construir una solución tecnológica en equipo. Forma tu grupo, elige un reto y presenta tu prototipo ante un jurado de docentes y profesionales. Habrá mentorías, snacks y premios para los mejores proyectos.</p>
+
+                <h2>Ubicación</h2>
+                <div class="ubicacion" style="background-image: url('../../img/campus-monterrico.jpg')" role="img" aria-label="Campus Monterrico"></div>
+                <p class="detail-direccion"><strong>Campus Monterrico</strong> · Laboratorio de Cómputo<br>Prolongación Primavera 2390, Santiago de Surco</p>
+            </div>
+            <aside class="info-card">
+                <h3>Detalles del evento</h3>
+                <ul>
+                    <li>
+                        <span class="dato-icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
+                        <div><small>Fecha</small><strong>25 nov 2026</strong></div>
+                    </li>
+                    <li>
+                        <span class="dato-icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
+                        <div><small>Hora</small><strong>08:00</strong></div>
+                    </li>
+                    <li>
+                        <span class="dato-icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+                        <div><small>Campus</small><strong>Monterrico</strong></div>
+                    </li>
+                    <li>
+                        <span class="dato-icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg></span>
+                        <div><small>Ambiente</small><strong>Laboratorio de Cómputo</strong></div>
+                    </li>
+                    <li>
+                        <span class="dato-icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+                        <div><small>Capacidad</small><strong>120 personas</strong></div>
+                    </li>
+                </ul>
+                <button type="button" class="btn btn-primary btn-block">Asistiré</button>
+            </aside>
+        </section>
+
+        <section class="section section-soft">
+            <div class="container">
+                <div class="section-head">
+                    <h2>Más eventos</h2>
+                </div>
+                <div class="grid grid-3">
+                    <article class="card event-card">
+                        <div class="event-cover" style="background-image: url('../../img/eventos/trabajo-grupal.jpg')"></div>
+                        <div class="event-body">
+                            <p class="event-meta">20 nov 2026 · San Isidro</p>
+                            <h3>Feria de Carreras UPC</h3>
+                            <p>Empresas aliadas presentan sus prácticas preprofesionales y ofertas laborales. Lleva tu CV, conversa con los reclutadores y participa en mini entrevistas en vivo para conocer qué buscan.</p>
+                            <a href="evento.html" class="btn btn-block">Ver detalle</a>
+                        </div>
+                    </article>
+                    <article class="card event-card">
+                        <div class="event-cover" style="background-image: url('../../img/eventos/cancha.jpg')"></div>
+                        <div class="event-body">
+                            <p class="event-meta">28 nov 2026 · Villa</p>
+                            <h3>Torneo de Fútbol Interfacultades</h3>
+                            <p>Las facultades compiten por la copa del ciclo en una fase de grupos y eliminatorias. Cada equipo debe inscribirse con su delegado. Habrá barras, arbitraje oficial y premiación al final de la jornada.</p>
+                            <a href="evento.html" class="btn btn-block">Ver detalle</a>
+                        </div>
+                    </article>
+                    <article class="card event-card">
+                        <div class="event-cover" style="background-image: url('../../img/eventos/luces.jpg')"></div>
+                        <div class="event-body">
+                            <p class="event-meta">09 dic 2026 · Monterrico</p>
+                            <h3>Festival de Talentos</h3>
+                            <p>Estudiantes de todas las carreras muestran su música, baile, teatro y stand up en una noche abierta a toda la comunidad. Ven a alentar a tus compañeros y descubre nuevos talentos del campus.</p>
+                            <a href="evento.html" class="btn btn-block">Ver detalle</a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <button type="button" class="asistente-boton" id="boton-chat">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2M20 14h2M15 13v2M9 13v2"/></svg>
+        Asistente
+    </button>
+
+    <section class="asistente-ventana" id="ventana-chat" hidden>
+        <div class="chat-head">
+            <div><strong>Asistente</strong><span>Te ayuda a encontrar eventos</span></div>
+            <button type="button" id="boton-cerrar-chat">Cerrar</button>
+        </div>
+        <div class="chat-msgs" id="mensajes">
+            <div class="msg msg-bot">¡Hola! Cuéntame qué tipo de evento buscas.</div>
+        </div>
+        <form class="chat-form" id="formulario-chat">
+            <input type="text" id="texto-chat" placeholder="Escribe tu pregunta…" autocomplete="off" required>
+            <button type="button" class="btn" id="boton-microfono" title="Hablar">🎤</button>
+            <button type="submit" class="btn btn-primary">Enviar</button>
+        </form>
+    </section>
+
+    <script src="../../js/localstorage.js"></script>
+    <script src="../../js/events.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/agent.js"></script>
+</body>
+</html>

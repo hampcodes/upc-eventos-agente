@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis eventos | UPC</title>
+    <link rel="icon" type="image/png" href="../../img/favicon-upc.png">
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="container">
+            <a href="../../index.html" class="logo"><img src="../../img/favicon-upc.png" alt="UPC - Ir al inicio"></a>
+            <input type="checkbox" id="menu-abierto" class="menu-toggle" aria-hidden="true">
+            <label for="menu-abierto" class="menu-btn" aria-label="Abrir menú"><span></span><span></span><span></span></label>
+            <nav class="nav-links">
+                <a href="events.html">Mis eventos</a>
+                <a href="new-event.html">Nuevo evento</a>
+                <span class="usuario" id="nombre-usuario"></span>
+                <button type="button" class="btn btn-primary" id="boton-salir">Salir</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container page">
+        <div class="page-head">
+            <div>
+                <h1>Mis eventos</h1>
+                <p>Administra los eventos que has creado.</p>
+            </div>
+            <a href="new-event.html" class="btn btn-primary">+ Nuevo evento</a>
+        </div>
+
+        <div class="toolbar">
+            <div class="search">
+                <input type="search" id="buscador" placeholder="Buscar por nombre…" aria-label="Buscar eventos">
+            </div>
+        </div>
+
+        <div class="event-list" id="lista-eventos"></div>
+    </main>
+
+    <script src="../../js/localstorage.js"></script>
+    <script src="../../js/events.js"></script>
+    <script src="../../js/auth.js"></script>
+</body>
+</html>

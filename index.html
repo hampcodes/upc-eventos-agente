@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universidad Peruana de Ciencias Aplicadas | UPC</title>
+    <meta name="description" content="Descubre los eventos de los campus de la UPC y mira todos sus detalles.">
+    <link rel="icon" type="image/png" href="img/favicon-upc.png">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo"><img src="img/favicon-upc.png" alt="UPC - Ir al inicio"></a>
+            <input type="checkbox" id="menu-abierto" class="menu-toggle" aria-hidden="true">
+            <label for="menu-abierto" class="menu-btn" aria-label="Abrir menú"><span></span><span></span><span></span></label>
+            <nav class="nav-links">
+                <a href="#beneficios">Beneficios</a>
+                <a href="#eventos">Eventos</a>
+                <a href="#campus">Campus</a>
+                <a href="#como-funciona">Cómo funciona</a>
+                <a href="pages/auth/login.html">Ingresar</a>
+                <a href="pages/auth/sigin.html" class="btn btn-primary">Registrarse</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container hero-contenido">
+                <div class="hero-text">
+                    <h1>Vive los eventos</h1>
+                    <p class="hero-etiqueta">de tu campus UPC</p>
+                </div>
+                <aside class="hero-card">
+                    <h2>Únete a los eventos de la UPC</h2>
+                    <p>Descubre qué pasa en Monterrico, San Isidro, San Miguel y Villa, y revisa fecha, hora y lugar de cada evento.</p>
+                    <a href="pages/auth/sigin.html" class="btn btn-primary btn-block">Crear mi cuenta</a>
+                    <a href="pages/auth/login.html" class="btn btn-block">Ingresar</a>
+                </aside>
+            </div>
+        </section>
+
+        <section class="banda">
+            <div class="container">
+                <p>Explora los eventos de nuestros <strong>4 campus</strong> y vive la experiencia UPC.</p>
+            </div>
+        </section>
+
+        <section class="section section-soft" id="beneficios">
+            <div class="container">
+                <div class="section-head">
+                    <h2>Todo lo que necesitas</h2>
+                    <p>Encuentra y elige los eventos de la UPC que más te interesan.</p>
+                </div>
+                <div class="grid grid-3">
+                    <article class="card">
+                        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div>
+                        <h3>Descubre eventos</h3>
+                        <p>Charlas, ferias, torneos y talleres que pasan en tu universidad, en un solo lugar.</p>
+                    </article>
+                    <article class="card">
+                        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+                        <h3>Elige tu campus</h3>
+                        <p>Filtra por Monterrico, San Isidro, San Miguel o Villa y mira qué hay cerca de ti.</p>
+                    </article>
+                    <article class="card">
+                        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg></div>
+                        <h3>Revisa los detalles</h3>
+                        <p>Mira fecha, hora, campus, ambiente y capacidad antes de decidir a cuál ir.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="eventos">
+            <div class="container">
+                <div class="section-head">
+                    <h2>Próximos eventos</h2>
+                    <p>Una muestra de lo que puedes encontrar.</p>
+                </div>
+                <div class="grid grid-3">
+                    <article class="card event-card">
+                        <div class="event-cover" style="background-image: url('img/eventos/trabajo-grupal.jpg')"></div>
+                        <div class="event-body">
+                            <p class="event-meta">20 nov 2026 · San Isidro</p>
+                            <h3>Feria de Carreras UPC</h3>
+                            <p>Empresas aliadas presentan sus prácticas preprofesionales y ofertas laborales. Lleva tu CV, conversa con los reclutadores y participa en mini entrevistas en vivo para conocer qué buscan.</p>
+                            <a href="pages/participante/evento.html" class="btn btn-block">Ver detalle</a>
+                        </div>
+                    </article>
+                    <article class="card event-card">
+                        <div class="event-cover" style="background-image: url('img/eventos/computo.jpg')"></div>
+                        <div class="event-body">
+                            <p class="event-meta">25 nov 2026 · Monterrico</p>
+                            <h3>Hackathon UPC</h3>
+                            <p>24 horas para construir una solución tecnológica en equipo. Forma tu grupo, elige un reto y presenta tu prototipo ante un jurado de docentes y profesionales. Habrá mentorías, snacks y premios para los mejores proyectos.</p>
+                            <a href="pages/participante/evento.html" class="btn btn-block">Ver detalle</a>
+                        </div>
+                    </article>
+                    <article class="card event-card">
+                        <div class="event-cover" style="background-image: url('img/eventos/cancha.jpg')"></div>
+                        <div class="event-body">
+                            <p class="event-meta">28 nov 2026 · Villa</p>
+                            <h3>Torneo de Fútbol Interfacultades</h3>
+                            <p>Las facultades compiten por la copa del ciclo en una fase de grupos y eliminatorias. Cada equipo debe inscribirse con su delegado. Habrá barras, arbitraje oficial y premiación al final de la jornada.</p>
+                            <a href="pages/participante/evento.html" class="btn btn-block">Ver detalle</a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section section-soft" id="campus">
+            <div class="container">
+                <div class="section-head">
+                    <h2>Nuestros campus</h2>
+                    <p>Elige dónde quieres vivir tu próximo evento.</p>
+                </div>
+                <div class="campus-grid">
+                    <a href="pages/auth/login.html" class="campus-card campus-monterrico">
+                        <div class="campus-info"><h3>Monterrico</h3><span class="campus-total">2 eventos</span></div>
+                    </a>
+                    <a href="pages/auth/login.html" class="campus-card campus-san-isidro">
+                        <div class="campus-info"><h3>San Isidro</h3><span class="campus-total">1 evento</span></div>
+                    </a>
+                    <a href="pages/auth/login.html" class="campus-card campus-san-miguel">
+                        <div class="campus-info"><h3>San Miguel</h3><span class="campus-total">1 evento</span></div>
+                    </a>
+                    <a href="pages/auth/login.html" class="campus-card campus-villa">
+                        <div class="campus-info"><h3>Villa</h3><span class="campus-total">1 evento</span></div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="como-funciona">
+            <div class="container">
+                <div class="section-head">
+                    <h2>Cómo funciona</h2>
+                    <p>Tres pasos para empezar.</p>
+                </div>
+                <div class="grid grid-3 steps">
+                    <div class="step">
+                        <h3>Crea tu cuenta</h3>
+                        <p>Regístrate gratis con tu correo.</p>
+                    </div>
+                    <div class="step">
+                        <h3>Explora los eventos</h3>
+                        <p>Busca por nombre o filtra por campus.</p>
+                    </div>
+                    <div class="step">
+                        <h3>Revisa los detalles</h3>
+                        <p>Mira fecha, hora y lugar, y listo.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta">
+            <div class="container">
+                <h2>¿Listo para tu próximo evento?</h2>
+                <p>Empieza hoy, es gratis.</p>
+                <a href="pages/auth/sigin.html" class="btn btn-primary">Crear cuenta</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-grid">
+            <div>
+                <h4>Explora</h4>
+                <ul>
+                    <li><a href="#beneficios">Beneficios</a></li>
+                    <li><a href="#eventos">Próximos eventos</a></li>
+                    <li><a href="#campus">Campus</a></li>
+                    <li><a href="#como-funciona">Cómo funciona</a></li>
+                    <li><a href="pages/auth/login.html">Ingresar</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4>Campus</h4>
+                <ul class="footer-campus">
+                    <li><strong>Monterrico</strong>Prolongación Primavera 2390, Surco</li>
+                    <li><strong>San Isidro</strong>Av. Salaverry 2255, San Isidro</li>
+                    <li><strong>San Miguel</strong>Av. La Marina 2810, San Miguel</li>
+                    <li><strong>Villa</strong>Alameda San Marcos cuadra 2, Chorrillos</li>
+                </ul>
+            </div>
+
+            <div>
+                <h4>UPC</h4>
+                <ul>
+                    <li><a href="https://www.upc.edu.pe/" target="_blank" rel="noopener">Sitio oficial de la UPC</a></li>
+                    <li><a href="https://descubre.upc.edu.pe/conoce-mas-de-upc/campus-upc-instalaciones-infraestructura/" target="_blank" rel="noopener">Conoce los campus</a></li>
+                    <li><a href="https://www.upc.edu.pe/servicios/vida-universitaria/espacios-deportivos/" target="_blank" rel="noopener">Espacios deportivos</a></li>
+                    <li><a href="https://pregrado.upc.edu.pe/landings/eventos/visitas-guiadas/" target="_blank" rel="noopener">Visitas guiadas</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-final">
+            <div class="container">
+                <span>© 2026 Universidad Peruana de Ciencias Aplicadas. Proyecto académico, no es el sitio oficial de la UPC.</span>
+                <span>Desarrollado por Hampcode</span>
+            </div>
+        </div>
+    </footer>
+
+    <button type="button" class="asistente-boton" id="boton-chat">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2M20 14h2M15 13v2M9 13v2"/></svg>
+        Asistente
+    </button>
+
+    <section class="asistente-ventana" id="ventana-chat" hidden>
+        <div class="chat-head">
+            <div><strong>Asistente</strong><span>Te ayuda a encontrar eventos</span></div>
+            <button type="button" id="boton-cerrar-chat">Cerrar</button>
+        </div>
+        <div class="chat-msgs" id="mensajes">
+            <div class="msg msg-bot">¡Hola! Cuéntame qué tipo de evento buscas.</div>
+        </div>
+        <form class="chat-form" id="formulario-chat">
+            <input type="text" id="texto-chat" placeholder="Escribe tu pregunta…" autocomplete="off" required>
+            <button type="button" class="btn" id="boton-microfono" title="Hablar">🎤</button>
+            <button type="submit" class="btn btn-primary">Enviar</button>
+        </form>
+    </section>
+
+    <script src="js/localstorage.js"></script>
+    <script src="js/events.js"></script>
+    <script src="js/agent.js"></script>
+</body>
+</html>
