@@ -9,6 +9,7 @@ const botonMicrofono = document.querySelector("#boton-microfono");
 // La clave NO está aquí: la agrega la función de Netlify desde el archivo .env
 const urlApi = "/.netlify/functions/chat";
 const modelo = "gpt-4o-mini";
+const idioma = "es-MX"; // idioma de la voz y del micrófono: "es-MX", "es-ES", "es-PE"...
 
 const instrucciones = `Eres el asistente de UPC Eventos. Responde en español, breve y amable, en texto plano sin Markdown ni asteriscos.
 Usa obtener_eventos para consultar los eventos y sus precios; no inventes eventos.
@@ -217,11 +218,11 @@ const pedirRespuesta = async (pregunta) => {
 
 const hablar = (texto) => {
   const voces = speechSynthesis.getVoices();
-  const vozEspanol = voces.find((v) => v.lang.replace("_", "-") === "es-MX") || voces.find((v) => v.lang.startsWith("es"));
+  const vozEspanol = voces.find((v) => v.lang.replace("_", "-") === idioma) || voces.find((v) => v.lang.startsWith("es"));
 
   const voz = new SpeechSynthesisUtterance(texto);
   voz.voice = vozEspanol;
-  voz.lang = vozEspanol ? vozEspanol.lang : "es-MX";
+  voz.lang = vozEspanol ? vozEspanol.lang : idioma;
   speechSynthesis.cancel();
   speechSynthesis.speak(voz);
 };
@@ -258,7 +259,7 @@ const empezarAEscuchar = () => {
   textoDicho = "";
 
   reconocedor = new Reconocimiento();
-  reconocedor.lang = "es-MX";
+  reconocedor.lang = idioma;
   reconocedor.continuous = true; // sigue escuchando aunque hagas pausas
   reconocedor.onresult = (e) => {
     textoDicho = Array.from(e.results).map((r) => r[0].transcript).join(" ");
