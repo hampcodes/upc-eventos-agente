@@ -11,8 +11,9 @@ const urlApi = "/.netlify/functions/chat";
 const modelo = "gpt-4o-mini";
 
 const instrucciones = `Eres el asistente de UPC Eventos. Responde en español, breve y amable, en texto plano sin Markdown ni asteriscos.
-Usa obtener_eventos para consultar los eventos; no inventes eventos.
-Para comprar: primero pregunta qué evento y cuántas entradas, luego pide confirmación ("¿Confirmas X entradas para Y?") y SOLO después de que el usuario diga que sí usa comprar_evento.`;
+Usa obtener_eventos para consultar los eventos y sus precios; no inventes eventos.
+Para comprar: primero pregunta qué evento y cuántas entradas, luego pide confirmación indicando el total en soles ("¿Confirmas X entradas para Y por S/ Z?") y SOLO después de que el usuario diga que sí usa comprar_evento.
+Si el usuario pide ver su pago, su compra o el detalle de su entrada, usa ver_detalle_pago.`;
 const mensajeError = "No pude conectar con el asistente.";
 const puntos = '<span class="puntos"><span></span><span></span><span></span></span>';
 
@@ -38,6 +39,14 @@ const herramientasIA = [
       },
     },
   },
+  {
+    type: "function",
+    function: {
+      name: "ver_detalle_pago",
+      description: "Muestra el detalle de pago de las entradas compradas por el usuario con sesión iniciada. Se puede filtrar por nombre de evento.",
+      parameters: { type: "object", properties: { evento: { type: "string", description: "Texto opcional del nombre del evento" } } },
+    },
+  },
 ];
 
 // Historial de la conversación (para que el agente recuerde el contexto)
@@ -49,7 +58,7 @@ const obtenerEventosHerramienta = ({ buscar = "" }) => {
   const texto = buscar.toLowerCase();
   return obtenerEventos()
     .filter((e) => `${e.titulo} ${e.campus} ${e.descripcion}`.toLowerCase().includes(texto))
-    .map((e) => ({ id: e.id, titulo: e.titulo, fecha: e.fecha, hora: e.hora, campus: e.campus, ambiente: e.ambiente, descripcion: e.descripcion, entradas_disponibles: e.capacidad - entradasVendidas(e.id) }));
+    .map((e) => ({ id: e.id, titulo: e.titulo, fecha: e.fecha, hora: e.hora, campus: e.campus, ambiente: e.ambiente, precio_soles: e.precio || 0, descripcion: e.descripcion, entradas_disponibles: e.capacidad - entradasVendidas(e.id) }));
 };
 
 const entradasVendidas = (idEvento) => {
@@ -66,14 +75,34 @@ const comprarEventoHerramienta = ({ id, cantidad }) => {
   if (cantidad > evento.capacidad - entradasVendidas(id)) return { error: "No hay suficientes entradas disponibles." };
 
   const compras = leerDatos("upc_compras", []);
-  compras.push({ idEvento: id, usuario: sesion.nombre, cantidad, fecha: new Date().toISOString() });
+  const precio = evento.precio || 0;
+  const codigo = `UPC-${Date.now().toString().slice(-6)}`;
+  compras.push({ codigo, idEvento: id, usuario: sesion.nombre, cantidad, precio, fecha: new Date().toISOString() });
   guardarDatos("upc_compras", compras);
-  return { ok: true, evento: evento.titulo, cantidad };
+  return { ok: true, codigo, evento: evento.titulo, cantidad, total_soles: precio * cantidad };
+};
+
+const verDetallePagoHerramienta = ({ evento = "" }) => {
+  const sesion = leerDatos("upc_sesion_actual", null);
+  if (!sesion) return { error: "El usuario debe iniciar sesión para ver sus pagos." };
+
+  const eventos = obtenerEventos();
+  const pagos = leerDatos("upc_compras", [])
+    .filter((c) => c.usuario === sesion.nombre)
+    .map((c) => {
+      const e = eventos.find((ev) => ev.id === c.idEvento) || {};
+      const precio = c.precio || 0;
+      return { codigo: c.codigo, evento: e.titulo || "", fecha_evento: e.fecha, cantidad: c.cantidad, precio_unitario_soles: precio, total_soles: precio * c.cantidad, estado: "Pagado", fecha_compra: c.fecha };
+    })
+    .filter((p) => p.evento.toLowerCase().includes(evento.toLowerCase()));
+
+  return pagos.length ? pagos : { mensaje: "No tienes compras registradas." };
 };
 
 const herramientas = {
   obtener_eventos: obtenerEventosHerramienta,
   comprar_evento: comprarEventoHerramienta,
+  ver_detalle_pago: verDetallePagoHerramienta,
 };
 
 
@@ -117,9 +146,13 @@ const pedirRespuesta = async (pregunta) => {
 };
 
 const hablar = (texto) => {
-  speechSynthesis.cancel();
+  const voces = speechSynthesis.getVoices();
+  const vozEspanol = voces.find((v) => v.lang.replace("_", "-") === "es-MX") || voces.find((v) => v.lang.startsWith("es"));
+
   const voz = new SpeechSynthesisUtterance(texto);
-  voz.lang = "es-PE";
+  voz.voice = vozEspanol;
+  voz.lang = vozEspanol ? vozEspanol.lang : "es-MX";
+  speechSynthesis.cancel();
   speechSynthesis.speak(voz);
 };
 
@@ -142,6 +175,7 @@ const enviarMensaje = (e) => {
 };
 
 // ===== Voz =====
+speechSynthesis.getVoices(); // el navegador carga las voces en segundo plano
 const Reconocimiento = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 const escuchar = () => {
