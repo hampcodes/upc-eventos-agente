@@ -178,13 +178,37 @@ const enviarMensaje = (e) => {
 speechSynthesis.getVoices(); // el navegador carga las voces en segundo plano
 const Reconocimiento = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-const escuchar = () => {
-  const reconocedor = new Reconocimiento();
-  reconocedor.lang = "es-PE";
+let reconocedor = null;
+let textoDicho = "";
+
+// Al pulsar el micrófono: empieza a escuchar
+const empezarAEscuchar = () => {
+  if (reconocedor) return;
+  speechSynthesis.cancel(); // el asistente deja de hablar para no escucharse a sí mismo
+  textoDicho = "";
+
+  reconocedor = new Reconocimiento();
+  reconocedor.lang = "es-MX";
+  reconocedor.continuous = true; // sigue escuchando aunque hagas pausas
+  reconocedor.onresult = (e) => {
+    textoDicho = Array.from(e.results).map((r) => r[0].transcript).join(" ");
+  };
+  reconocedor.onerror = (e) => {
+    if (e.error === "not-allowed") agregarMensaje("Permite el uso del micrófono en el navegador.", "bot");
+  };
+  reconocedor.onend = () => {
+    botonMicrofono.classList.remove("escuchando");
+    reconocedor = null;
+    if (textoDicho.trim()) enviarPregunta(textoDicho.trim(), true);
+  };
+
   botonMicrofono.classList.add("escuchando");
-  reconocedor.onresult = (e) => enviarPregunta(e.results[0][0].transcript, true);
-  reconocedor.onend = () => botonMicrofono.classList.remove("escuchando");
   reconocedor.start();
+};
+
+// Al soltar el micrófono: termina de escuchar y se envía lo dicho
+const terminarDeEscuchar = () => {
+  if (reconocedor) reconocedor.stop();
 };
 
 
@@ -194,7 +218,13 @@ document.querySelector("#boton-cerrar-chat").addEventListener("click", abrirOCer
 document.querySelector("#formulario-chat").addEventListener("submit", enviarMensaje);
 
 if (Reconocimiento) {
-  botonMicrofono.addEventListener("click", escuchar);
+  botonMicrofono.addEventListener("pointerdown", (e) => {
+    botonMicrofono.setPointerCapture(e.pointerId); // recibe el "soltar" aunque el puntero salga del botón
+    empezarAEscuchar();
+  });
+  botonMicrofono.addEventListener("pointerup", terminarDeEscuchar);
+  botonMicrofono.addEventListener("pointercancel", terminarDeEscuchar);
+  botonMicrofono.addEventListener("contextmenu", (e) => e.preventDefault()); // sin menú al mantener pulsado
 } else {
   botonMicrofono.hidden = true; // el navegador no soporta voz
 }
