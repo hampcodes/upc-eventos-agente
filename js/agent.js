@@ -13,7 +13,12 @@ const modelo = "gpt-4o-mini";
 const instrucciones = `Eres el asistente de UPC Eventos. Responde en español, breve y amable, en texto plano sin Markdown ni asteriscos.
 Usa obtener_eventos para consultar los eventos y sus precios; no inventes eventos.
 Para comprar: primero pregunta qué evento y cuántas entradas, luego pide confirmación indicando el total en soles ("¿Confirmas X entradas para Y por S/ Z?") y SOLO después de que el usuario diga que sí usa comprar_evento.
-Si el usuario pide ver su pago, su compra o el detalle de su entrada, usa ver_detalle_pago.`;
+Si el usuario pide ver su pago, su compra o el detalle de su entrada, usa ver_detalle_pago.
+Si el usuario pide una recomendación (por gustos, presupuesto, campus o fechas), usa recomendar_eventos y elige tú los que mejor encajen con sus gustos según la descripción.
+Si un organizador pide crear un evento: pide los datos que falten (título, descripción, fecha, hora, campus, ambiente, capacidad y precio), resume y pide confirmación, y SOLO después de que diga que sí usa crear_evento. Escribe las fechas como AAAA-MM-DD y las horas como HH:MM de 24 horas.
+Hoy es ${new Date().toISOString().slice(0, 10)}.`;
+
+const campusValidos = ["Monterrico", "San Isidro", "San Miguel", "Villa"];
 const mensajeError = "No pude conectar con el asistente.";
 const puntos = '<span class="puntos"><span></span><span></span><span></span></span>';
 
@@ -47,6 +52,43 @@ const herramientasIA = [
       parameters: { type: "object", properties: { evento: { type: "string", description: "Texto opcional del nombre del evento" } } },
     },
   },
+  {
+    type: "function",
+    function: {
+      name: "recomendar_eventos",
+      description: "Devuelve hasta 5 próximos eventos con entradas disponibles, filtrando por campus, precio máximo o rango de fechas. Elige y recomienda según los gustos del usuario leyendo las descripciones.",
+      parameters: {
+        type: "object",
+        properties: {
+          campus: { type: "string", enum: campusValidos },
+          precio_maximo: { type: "number", description: "Precio máximo por entrada en soles (0 = solo gratis)" },
+          desde: { type: "string", description: "Fecha mínima AAAA-MM-DD" },
+          hasta: { type: "string", description: "Fecha máxima AAAA-MM-DD" },
+        },
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "crear_evento",
+      description: "Crea un evento nuevo. Solo para organizadores con sesión iniciada. Úsala solo tras confirmación explícita.",
+      parameters: {
+        type: "object",
+        properties: {
+          titulo: { type: "string" },
+          descripcion: { type: "string" },
+          fecha: { type: "string", description: "AAAA-MM-DD" },
+          hora: { type: "string", description: "HH:MM en 24 horas" },
+          campus: { type: "string", enum: campusValidos },
+          ambiente: { type: "string", description: "Lugar dentro del campus (ej. Auditorio)" },
+          capacidad: { type: "number", description: "Número de entradas disponibles" },
+          precio: { type: "number", description: "Precio por entrada en soles (0 si es gratis)" },
+        },
+        required: ["titulo", "descripcion", "fecha", "hora", "campus", "ambiente", "capacidad"],
+      },
+    },
+  },
 ];
 
 // Historial de la conversación (para que el agente recuerde el contexto)
@@ -54,11 +96,13 @@ const historial = [{ role: "system", content: instrucciones }];
 
 
 // ===== Herramientas (código real que se ejecuta) =====
+const resumenEvento = (e) => ({ id: e.id, titulo: e.titulo, fecha: e.fecha, hora: e.hora, campus: e.campus, ambiente: e.ambiente, precio_soles: e.precio || 0, descripcion: e.descripcion, entradas_disponibles: e.capacidad - entradasVendidas(e.id) });
+
 const obtenerEventosHerramienta = ({ buscar = "" }) => {
   const texto = buscar.toLowerCase();
   return obtenerEventos()
     .filter((e) => `${e.titulo} ${e.campus} ${e.descripcion}`.toLowerCase().includes(texto))
-    .map((e) => ({ id: e.id, titulo: e.titulo, fecha: e.fecha, hora: e.hora, campus: e.campus, ambiente: e.ambiente, precio_soles: e.precio || 0, descripcion: e.descripcion, entradas_disponibles: e.capacidad - entradasVendidas(e.id) }));
+    .map(resumenEvento);
 };
 
 const entradasVendidas = (idEvento) => {
@@ -99,10 +143,36 @@ const verDetallePagoHerramienta = ({ evento = "" }) => {
   return pagos.length ? pagos : { mensaje: "No tienes compras registradas." };
 };
 
+const recomendarEventosHerramienta = ({ campus = "", precio_maximo = Infinity, desde = "", hasta = "9999-12-31" }) => {
+  const hoy = new Date().toISOString().slice(0, 10);
+  return obtenerEventos()
+    .filter((e) => e.fecha >= hoy && e.fecha >= desde && e.fecha <= hasta)
+    .filter((e) => e.campus.toLowerCase().includes(campus.toLowerCase()))
+    .filter((e) => (e.precio || 0) <= precio_maximo)
+    .filter((e) => e.capacidad - entradasVendidas(e.id) > 0)
+    .sort((a, b) => a.fecha.localeCompare(b.fecha))
+    .slice(0, 5)
+    .map(resumenEvento);
+};
+
+const crearEventoHerramienta = ({ titulo, descripcion, fecha, hora, campus, ambiente, capacidad, precio = 0 }) => {
+  const sesion = leerDatos("upc_sesion_actual", null);
+  if (!sesion || sesion.rol !== "organizador") return { error: "Solo un organizador con sesión iniciada puede crear eventos." };
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(fecha) || !/^\d{2}:\d{2}$/.test(hora)) return { error: "Fecha (AAAA-MM-DD) u hora (HH:MM) inválida." };
+  if (!campusValidos.includes(campus)) return { error: `Campus inválido. Usa: ${campusValidos.join(", ")}.` };
+  if (!(capacidad > 0) || precio < 0) return { error: "La capacidad debe ser mayor a 0 y el precio no puede ser negativo." };
+
+  crearEvento({ titulo, imagen: "/img/eventos/campus-aereo.jpg", descripcion, fecha, hora, campus, ambiente, precio, capacidad });
+  if (typeof mostrarEventos === "function") mostrarEventos(); // refresca la lista si la página la tiene
+  return { ok: true, titulo, fecha, hora, campus, capacidad, precio_soles: precio };
+};
+
 const herramientas = {
   obtener_eventos: obtenerEventosHerramienta,
   comprar_evento: comprarEventoHerramienta,
   ver_detalle_pago: verDetallePagoHerramienta,
+  recomendar_eventos: recomendarEventosHerramienta,
+  crear_evento: crearEventoHerramienta,
 };
 
 
