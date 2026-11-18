@@ -17,6 +17,7 @@ Para comprar: primero pregunta qué evento y cuántas entradas, luego pide confi
 Si el usuario pide ver su pago, su compra o el detalle de su entrada, usa ver_detalle_pago.
 Si el usuario pide una recomendación (por gustos, presupuesto, campus o fechas), usa recomendar_eventos y elige tú los que mejor encajen con sus gustos según la descripción.
 Si un organizador pide crear un evento: pide los datos que falten (título, descripción, fecha, hora, campus, ambiente, capacidad y precio), resume y pide confirmación, y SOLO después de que diga que sí usa crear_evento. Escribe las fechas como AAAA-MM-DD y las horas como HH:MM de 24 horas.
+Si un organizador pide ver sus eventos, usa ver_mis_eventos (no obtener_eventos).
 Hoy es ${new Date().toISOString().slice(0, 10)}.`;
 
 const campusValidos = ["Monterrico", "San Isidro", "San Miguel", "Villa"];
@@ -88,6 +89,14 @@ const herramientasIA = [
         },
         required: ["titulo", "descripcion", "fecha", "hora", "campus", "ambiente", "capacidad"],
       },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "ver_mis_eventos",
+      description: "Lista solo los eventos creados por el organizador con sesión iniciada, con entradas vendidas y disponibles.",
+      parameters: { type: "object", properties: {} },
     },
   },
 ];
@@ -168,12 +177,24 @@ const crearEventoHerramienta = ({ titulo, descripcion, fecha, hora, campus, ambi
   return { ok: true, titulo, fecha, hora, campus, capacidad, precio_soles: precio };
 };
 
+const verMisEventosHerramienta = () => {
+  const sesion = leerDatos("upc_sesion_actual", null);
+  if (!sesion || sesion.rol !== "organizador") return { error: "Solo un organizador con sesión iniciada puede ver sus eventos." };
+
+  const mios = obtenerEventos()
+    .filter((e) => e.organizador === sesion.nombre)
+    .map((e) => ({ ...resumenEvento(e), entradas_vendidas: entradasVendidas(e.id) }));
+
+  return mios.length ? mios : { mensaje: "Todavía no tienes eventos creados." };
+};
+
 const herramientas = {
   obtener_eventos: obtenerEventosHerramienta,
   comprar_evento: comprarEventoHerramienta,
   ver_detalle_pago: verDetallePagoHerramienta,
   recomendar_eventos: recomendarEventosHerramienta,
   crear_evento: crearEventoHerramienta,
+  ver_mis_eventos: verMisEventosHerramienta,
 };
 
 
