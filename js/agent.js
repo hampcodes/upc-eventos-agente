@@ -272,9 +272,45 @@ speechSynthesis.getVoices(); // el navegador carga las voces en segundo plano
 const Reconocimiento = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 let reconocedor = null;
+let grabador = null;
+
+// Respaldo: graba el audio y lo transcribe con OpenAI (sirve en cualquier navegador con micrófono)
+const escucharGrabando = async () => {
+  if (grabador) return grabador.stop(); // segundo clic: termina y envía lo grabado
+  speechSynthesis.cancel();
+
+  try {
+    const flujo = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const trozos = [];
+    grabador = new MediaRecorder(flujo);
+    const grabador_tipo = grabador.mimeType;
+    botonMicrofono.classList.add("escuchando");
+    grabador.ondataavailable = (e) => trozos.push(e.data);
+    grabador.onstop = async () => {
+      flujo.getTracks().forEach((t) => t.stop());
+      botonMicrofono.classList.remove("escuchando");
+      grabador = null;
+      try {
+        const datos = new FormData();
+        const tipo = grabador_tipo || "audio/webm"; // Safari graba en mp4, Firefox/Brave en webm/ogg
+        datos.append("file", new Blob(trozos, { type: tipo }), `voz.${tipo.includes("mp4") ? "mp4" : tipo.includes("ogg") ? "ogg" : "webm"}`);
+        const res = await fetch("/.netlify/functions/transcribir", { method: "POST", body: datos });
+        const { text } = await res.json();
+        if (text) enviarPregunta(text, true);
+        else agregarMensaje("No te entendí, intenta de nuevo.", "bot");
+      } catch {
+        agregarMensaje("No pude transcribir el audio. Revisa tu conexión y la clave de OpenAI.", "bot");
+      }
+    };
+    grabador.start();
+  } catch {
+    agregarMensaje("No pude usar el micrófono. Permite el acceso en el candado de la barra de direcciones y usa localhost o https.", "bot");
+  }
+};
 
 // Un clic: empieza a escuchar y, al hacer una pausa, envía la pregunta
 const escuchar = () => {
+  if (!Reconocimiento) return escucharGrabando();
   if (reconocedor) return reconocedor.stop(); // segundo clic: termina y envía lo dicho
   speechSynthesis.cancel(); // el asistente deja de hablar para no escucharse a sí mismo
 
@@ -284,6 +320,13 @@ const escuchar = () => {
   reconocedor.onresult = (e) => enviarPregunta(e.results[0][0].transcript, true);
   reconocedor.onerror = (e) => {
     if (e.error === "not-allowed") agregarMensaje("Permite el micrófono: haz clic en el candado de la barra de direcciones, elige Micrófono → Permitir y vuelve a pulsar.", "bot");
+    else if (e.error === "no-speech") agregarMensaje("No te escuché, intenta de nuevo.", "bot");
+    else {
+      // el servicio de voz del navegador falló (red, servicio no disponible...): usamos el respaldo
+      reconocedor = null;
+      botonMicrofono.classList.remove("escuchando");
+      escucharGrabando();
+    }
   };
   reconocedor.onend = () => {
     botonMicrofono.classList.remove("escuchando");
@@ -298,7 +341,7 @@ document.querySelector("#boton-chat").addEventListener("click", abrirOCerrarChat
 document.querySelector("#boton-cerrar-chat").addEventListener("click", abrirOCerrarChat);
 document.querySelector("#formulario-chat").addEventListener("submit", enviarMensaje);
 
-if (Reconocimiento) {
+if (Reconocimiento || (navigator.mediaDevices && window.MediaRecorder)) {
   botonMicrofono.addEventListener("click", escuchar);
 } else {
   botonMicrofono.hidden = true; // el navegador no soporta voz
