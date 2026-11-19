@@ -257,7 +257,7 @@ const enviarPregunta = async (pregunta, porVoz = false) => {
 
   mensajes.lastElementChild.remove();
   agregarMensaje(respuesta, "bot");
-  if (porVoz) hablar(respuesta); // si preguntó con la voz, responde con voz
+  // El agente responde solo con texto (no habla), aunque la pregunta haya sido por voz
 };
 
 const enviarMensaje = (e) => {
@@ -273,6 +273,36 @@ const Reconocimiento = window.SpeechRecognition || window.webkitSpeechRecognitio
 
 let reconocedor = null;
 let grabador = null;
+
+// Detecta cuando el usuario deja de hablar (~0.9 s de silencio tras haber hablado) y llama a "detener"
+const detenerAlCallar = (flujo, detener) => {
+  const contexto = new AudioContext();
+  const analizador = contexto.createAnalyser();
+  analizador.fftSize = 512;
+  contexto.createMediaStreamSource(flujo).connect(analizador);
+  const datos = new Uint8Array(analizador.fftSize);
+
+  let hablo = false;
+  let ultimoSonido = Date.now();
+  const inicio = Date.now();
+
+  const revisar = setInterval(() => {
+    analizador.getByteTimeDomainData(datos);
+    const volumen = Math.max(...datos.map((d) => Math.abs(d - 128))); // 0 = silencio
+    if (volumen > 12) {
+      hablo = true;
+      ultimoSonido = Date.now();
+    }
+    const callado = hablo && Date.now() - ultimoSonido > 900;
+    const demasiado = Date.now() - inicio > 20000; // máximo 20 s
+    const sinVoz = !hablo && Date.now() - inicio > 8000; // 8 s sin decir nada
+    if (callado || demasiado || sinVoz) {
+      clearInterval(revisar);
+      contexto.close();
+      detener();
+    }
+  }, 150);
+};
 
 // Respaldo: graba el audio y lo transcribe con OpenAI (sirve en cualquier navegador con micrófono)
 const escucharGrabando = async () => {
@@ -303,6 +333,7 @@ const escucharGrabando = async () => {
       }
     };
     grabador.start();
+    detenerAlCallar(flujo, () => grabador && grabador.state === "recording" && grabador.stop());
   } catch {
     agregarMensaje("No pude usar el micrófono. Permite el acceso en el candado de la barra de direcciones y usa localhost o https.", "bot");
   }
